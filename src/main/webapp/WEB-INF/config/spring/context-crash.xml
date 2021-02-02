@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+    <bean class="org.crsh.spring.SpringWebBootstrap">
+        <property name="cmdMountPointConfig" value="war:/WEB-INF/crash/commands/"/>
+        <property name="confMountPointConfig" value="war:/WEB-INF/crash/"/>
+        <property name="config">
+            <props>
+                <prop key="crash.telnet.port">8023</prop>
+                <!-- VFS configuration -->
+                <prop key="crash.vfs.refresh_period">1</prop>
+                <!-- SSH configuration -->
+                <prop key="crash.ssh.port">8022</prop>
+                <!-- Optional SSH timeouts -->
+                <prop key="crash.ssh.auth_timeout">300000</prop>
+                <prop key="crash.ssh.idle_timeout">600000</prop>
+                <!-- Authentication configuration -->
+                <prop key="crash.auth">simple</prop>
+                <prop key="crash.auth.simple.username">crashUser</prop>
+                <prop key="crash.auth.simple.password">crashAdmin</prop>
+            </props>
+        </property>
+    </bean>
+
+</beans>
+

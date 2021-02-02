@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Data</title>
+</head>
+<body>
+<script type="text/javascript">
+    function sendPostRequest(url) {
+        var xmlHttp = new XMLHttpRequest();
+        var mimeType = "application/x-www-form-urlencoded";
+        var params = 'xml=' + encodeURIComponent(document.postForm.xml.value);
+        xmlHttp.open('POST', url, true);  // true : async false: sync
+        xmlHttp.setRequestHeader('Content-Type', mimeType);
+        xmlHttp.send(params);
+    }
+    function OnSubmitForm()
+    {
+        var url = "rest/admin/opensky/flights";
+        sendPostRequest(url);
+    }
+</script>
+<form name="postForm" action="rest/admin/opensky/flights" method="POST">
+    <input type="hidden" name="_method" value="put" />
+    Value: <textarea rows="10" cols="45" name="xml"></textarea><br>
+    <input type="button" value="Send" onclick="OnSubmitForm();">
+    <input type="submit" value="Submit">
+</form>
+</body>
+</html>

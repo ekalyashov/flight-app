@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <context:component-scan base-package="cselp.service, cselp.rest, cselp.zk"/>
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class = "org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes" value="application/json; charset=UTF-8" />
+                <!--if writeAcceptCharset true, writes all system charsets into Accept-Charset header,
+                when request header Accept:*/* -->
+                <property name="writeAcceptCharset" value="false" />
+            </bean>
+            <bean id="jacksonHttpMessageConverter"
+                  class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+                <property name="prettyPrint" value="true" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <context:annotation-config/>
+
+    <bean id="flightService" class="cselp.service.external.FlightService">
+        <property name="dao" ref="flightDao"/>
+    </bean>
+
+    <bean id="lFlightService" class="cselp.service.local.LFlightService">
+        <property name="dao" ref="lFlightDao"/>
+    </bean>
+
+    <bean id="reportService" class="cselp.service.local.ReportService">
+        <property name="dao" ref="reportDao"/>
+    </bean>
+
+    <bean id="reportComposer" class="cselp.service.report.ReportComposer"
+          init-method="init">
+        <property name="appProperties" ref="appConfig"/>
+        <property name="flightService" ref="flightService"/>
+        <property name="lFlightService" ref="lFlightService"/>
+        <property name="fastStore" ref="fastStore"/>
+        <property name="reportService" ref="reportService"/>
+        <property name="cacheManager" ref="ehCacheManager"/>
+    </bean>
+
+    <bean id="dataSyncService" class="cselp.service.DataSyncService"
+          scope="singleton" init-method="init">
+        <property name="appProperties" ref="appConfig"/>
+        <property name="flightService" ref="flightService"/>
+        <property name="lFlightService" ref="lFlightService"/>
+        <property name="fastStore" ref="fastStore"/>
+    </bean>
+
+    <bean id="ldapService" class="cselp.service.ldap.LdapService" init-method="init">
+        <property name="appProperties" ref="appConfig"/>
+    </bean>
+
+    <!--specified ThreadPoolTaskExecutor for asynchronous message processing-->
+    <bean id="applicationEventMulticaster"
+          class="org.springframework.context.event.SimpleApplicationEventMulticaster" depends-on="lFlightService">
+        <property name="taskExecutor">
+            <bean class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"/>
+        </property>
+    </bean>
+
+    <bean id="logEventListener" class="cselp.event.LogEventListener" scope="singleton"
+          depends-on="applicationEventMulticaster">
+        <property name="messageProducer" ref="messageProducer"/>
+        <property name="lFlightService" ref="lFlightService"/>
+    </bean>
+
+    <bean id="personsEventListener" class="cselp.event.PersonsEventListener" scope="singleton"
+          depends-on="applicationEventMulticaster">
+        <property name="reportComposer" ref="reportComposer"/>
+    </bean>
+
+    <bean id="fastStore" class="cselp.service.RedisStore" init-method="init" destroy-method="destroy">
+        <property name="appProperties" ref="appConfig"/>
+    </bean>
+
+    <!-- =====ActiveMQ stuff===== -->
+    <!--<amq:connectionFactory id="amqConnectionFactory"
+                           brokerURL="tcp://localhost:61616" />-->
+    <!--<bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL">
+            <value>tcp://localhost:61616</value>
+        </property>
+    </bean>-->
+    <bean id="amqConnectionFactory" class="org.apache.qpid.jms.JmsConnectionFactory">
+        <property name="remoteURI" value="amqp://localhost:5672" />
+    </bean>
+    <!-- A cached connection to wrap the ActiveMQ connection -->
+
+    <bean id="cachedConnectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <property name="targetConnectionFactory" ref="amqConnectionFactory" />
+        <property name="sessionCacheSize" value="10" />
+    </bean>
+    <!-- A destination in ActiveMQ -->
+    <bean id="destination" class="org.apache.activemq.command.ActiveMQQueue">
+        <constructor-arg value="RA_LOG_QUEUE" />
+    </bean>
+    <!-- A JmsTemplate instance that uses the cached connection and destination -->
+    <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="cachedConnectionFactory" />
+        <property name="defaultDestination" ref="destination" />
+    </bean>
+
+    <bean id="messageProducer" class="cselp.event.MessageProducer" scope="singleton">
+        <property name="jmsTemplate" ref="jmsTemplate" />
+    </bean>
+
+    <!-- =====Spring scheduling===== -->
+    <bean id="syncFlightsAndLegsTask" class="cselp.service.SyncFlightsAndLegsTask">
+        <property name="dataSyncService" ref="dataSyncService" />
+    </bean>
+
+    <bean id="loadFlightsDataTask" class="cselp.service.LoadFlightsDataTask">
+        <property name="appProperties" ref="appConfig"/>
+        <property name="flightService" ref="lFlightService"/>
+        <property name="dataSyncService" ref="dataSyncService" />
+    </bean>
+    <!--single-threaded scheduler - to avoid task interference-->
+    <task:scheduler id="taskScheduler" pool-size="1" />
+    <task:scheduled-tasks scheduler="taskScheduler">
+        <!--<task:scheduled ref="syncFlightsAndLegsTask" method="runSyncFlightsAndLegs" cron="0 0 6,21 25 12 ?"/>
+        <task:scheduled ref="loadFlightsDataTask" method="runLoadFlightsFiles" cron="0 5 5,20 25 12 ?"/>-->
+        <task:scheduled ref="syncFlightsAndLegsTask" method="runSyncFlightsAndLegs" cron="${sync.os.flights.cron}"/>
+        <task:scheduled ref="loadFlightsDataTask" method="runLoadFlightsFiles" cron="${load.os.files.cron}"/>
+
+    </task:scheduled-tasks>
+</beans>

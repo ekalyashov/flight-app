@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    <display-name>AKRSF</display-name>
+    <description>Rossiya-Airlines Web Application</description>
+
+    <!-- Starting Page -->
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+        <welcome-file>index.zul</welcome-file>
+    </welcome-file-list>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/index.html</location>
+    </error-page>
+
+    <!-- Spring specific definitions -->
+    <context-param>
+        <description>
+            Location of the XML file that defines the root application context.
+            Applied by ContextLoaderListener.
+        </description>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath:net/bull/javamelody/monitoring-spring.xml
+            /WEB-INF/config/spring/context-root.xml
+        </param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>monitoring</filter-name>
+        <filter-class>net.bull.javamelody.MonitoringFilter</filter-class>
+        <init-param>
+            <param-name>authorized-users</param-name>
+            <param-value>javamelody:12357</param-value>
+        </init-param>
+        <init-param>
+            <!-- enable/disable JavaMelody -->
+            <param-name>disabled</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>monitoring</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <listener>
+        <listener-class>net.bull.javamelody.SessionListener</listener-class>
+    </listener>
+
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Spring specific listeners -->
+    <listener>
+        <description>
+            Loads the root application context of this web app at startup, by default from
+            "/WEB-INF/applicationContext.xml". Use WebApplicationContextUtils.getWebApplicationContext(servletContext)
+            to access it anywhere in the web application, outside of the framework. The root context is the parent of
+            all servlet-specific contexts. This means that its beans are automatically available in these child
+            contexts, both for getBean(name) calls and (external) bean references.
+        </description>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <description>Supports web-specific scopes (request,session)</description>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>rest</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <!--set empty value to DispatcherServlet use rootContext from ContextLoaderListener
+            <param-value>/WEB-INF/config/spring/context-root.xml</param-value>-->
+            <param-value></param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>rest</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Monitoring</realm-name>
+    </login-config>
+    <security-role>
+        <role-name>monitoring</role-name>
+    </security-role>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Monitoring</web-resource-name>
+            <url-pattern>/monitoring</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>monitoring</role-name>
+        </auth-constraint>
+        <!-- if SSL enabled (SSL and certificate must then be configured in the server)
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+        -->
+    </security-constraint>
+
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
+</web-app>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j='http://jakarta.apache.org/log4j/'>
+
+    <appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+        <param name="Threshold" value="WARN"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{ABSOLUTE} AKR %-5p [%c{1}.%M:%L] %m%n"/>
+        </layout>
+    </appender>
+    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${catalina.home}/logs/cselp.log"/>
+        <param name="Append" value="false"/>
+        <param name="MaxFileSize" value="5MB"/>
+        <param name="MaxBackupIndex" value="5"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d AKR %-5p [%c.%M:%L] %m%n"/>
+        </layout>
+    </appender>
+
+    <appender name="FILE_2" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${catalina.home}/logs/cselp_audit.log"/>
+        <param name="Append" value="false"/>
+        <param name="MaxFileSize" value="5MB"/>
+        <param name="MaxBackupIndex" value="5"/>
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d AKR %-5p [%c.%M:%L] %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="org.apache.activemq">
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <!--exclude WARN "ResultSet's statement was not registered" - javamelody side effect-->
+    <logger name="org.hibernate.engine.jdbc.internal.JdbcCoordinatorImpl">
+        <level value="ERROR"/>
+    </logger>
+
+    <logger name="org.springframework.transaction.interceptor">
+        <level value="DEBUG"/>
+    </logger>
+
+    <logger name="audit">
+        <level value="INFO"/>
+        <appender-ref ref="FILE_2"/>
+    </logger>
+
+    <logger name="net.sf.ehcache">
+        <level value="DEBUG"/>
+    </logger>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</log4j:configuration>

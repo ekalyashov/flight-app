@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ehcache="http://www.springframework.org/schema/cache"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd">
+
+    <bean id="appConfig" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+                <value>classpath:/environments/${env}/spring_env.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:application.properties</value>
+                <value>classpath:/environments/${env}/spring_env.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- =============JNDI DataSource for J2EE environments============= -->
+    <!--<bean id="localDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="url" value="${database.url.local}"/>
+        <property name="driverClassName" value="${driver.class.name.local}"/>
+        <property name="username" value="${database.username.local}"/>
+        <property name="password" value="${database.password.local}"/>
+    </bean>
+
+    <bean id="externalDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="url" value="${database.url.external}"/>
+        <property name="driverClassName" value="${driver.class.name.external}"/>
+        <property name="username" value="${database.username.external}"/>
+        <property name="password" value="${database.password.external}"/>
+    </bean>-->
+
+    <bean id="localDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="url" value="${database.url.local}"/>
+        <property name="driverClassName" value="${driver.class.name.local}"/>
+        <property name="username" value="${database.username.local}"/>
+        <property name="password" value="${database.password.local}"/>
+        <property name="maxTotal" value="5"/>
+        <property name="maxWaitMillis" value="5000"/>
+    </bean>
+
+    <bean id="externalDataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="url" value="${database.url.external}"/>
+        <property name="driverClassName" value="${driver.class.name.external}"/>
+        <property name="username" value="${database.username.external}"/>
+        <property name="password" value="${database.password.external}"/>
+        <property name="maxTotal" value="5"/>
+        <property name="maxWaitMillis" value="5000"/>
+    </bean>
+
+    <import resource="context-dao.xml"/>
+    <import resource="context-service.xml"/>
+</beans>

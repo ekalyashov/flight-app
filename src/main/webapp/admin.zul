@@ -1,0 +1,120 @@
+<zk>
+    <window apply="org.zkoss.bind.BindComposer"
+            viewModel="@id('vm') @init('AdminViewModel')"
+            validationMessages="@id('vmsgs')">
+        <tabbox id="tb" >
+            <tabs id="tabs">
+                <tab id="LDAP" label="LDAP"/>
+                <tab id="Unlinked Legs" label="Legs"/>
+            </tabs>
+            <tabpanels>
+                <tabpanel>
+                    <hbox align="center">
+                        User Name:
+                        <textbox value="@bind(vm.userName)"/>
+                        <button label="Search" onClick="@command('getLdapUsers')"/>
+                    </hbox>
+                    <listbox height="160px" model="@bind(vm.userList)" emptyMessage="No user found in the result"
+                             style="margin-top:10px">
+                        <listhead>
+                            <listheader label="cn"/>
+                            <listheader label="name"/>
+                            <listheader label="DN"/>
+                        </listhead>
+                        <template name="model">
+                            <listitem>
+                                <listcell label="@bind(each.userName)"/>
+                                <listcell label="@bind(each.fullName)"/>
+                                <listcell label="@bind(each.dn)"/>
+                            </listitem>
+                        </template>
+                    </listbox>
+                </tabpanel>
+                <tabpanel>
+                    <hlayout id="searchLegsHLayout">
+                        Date from:
+                        <datebox value="@bind(vm.from)"
+                                 format="yyyy/MM/dd" width="150px"  tabindex="1"/>
+                        Date to:
+                        <datebox value="@bind(vm.to)"
+                                 format="yyyy/MM/dd" width="150px"  tabindex="2"/>
+                        <button id="searchBtn" width="115px" label="Search" onClick="@command('findUnlinkedLegs')" />
+                    </hlayout>
+                    <separator />
+                    <listbox id="unlinkedLegs" height="160px" model="@bind(vm.unlinkedLegs)"
+                             emptyMessage="Nothing found."
+                             style="margin-top:10px" selectedItem="@bind(vm.selectedLeg)" >
+                        <listhead>
+                            <listheader label="Id"/>
+                            <listheader label="TripId"/>
+                            <listheader label="TailNo"/>
+                            <listheader label="Origin"/>
+                            <listheader label="Destination"/>
+                            <listheader label="Departure"/>
+                            <listheader label="Take Off"/>
+                            <listheader label="Arrival"/>
+                            <listheader label="Touch Down"/>
+                        </listhead>
+                        <template name="model">
+                            <listitem>
+                                <listcell label="@bind(each.id)"/>
+                                <listcell label="@bind(each.tripId)"/>
+                                <listcell label="@bind(each.tailNum)"/>
+                                <listcell label="@bind(each.origin)"/>
+                                <listcell label="@bind(each.destination)"/>
+                                <listcell label="@bind(each.departureFact)"/>
+                                <listcell label="@bind(each.takeOff)"/>
+                                <listcell label="@bind(each.arrivalFact)"/>
+                                <listcell label="@bind(each.touchDown)"/>
+                            </listitem>
+                        </template>
+                    </listbox>
+                    <separator />
+                    <vlayout id="searchSimilarLegs">
+                        Check parameters for search. Departure or Arrival should be selected!
+                        <checkbox id="l1" label="Tail Num" checked="@bind(vm.searchTailNo)" />
+                        <checkbox id="l2" label="Origin" checked="@bind(vm.searchOrigin)" />
+                        <checkbox id="l3" label="Destination" checked="@bind(vm.searchDestination)" />
+                        <checkbox id="l4" label="Departure" checked="@bind(vm.searchDeparture)" />
+                        <checkbox id="l5" label="Arrival" checked="@bind(vm.searchArrival)" />
+                        <hlayout>
+                            Flight delta time, sec.:
+                            <textbox id="deltaTime" value="@bind(vm.deltaTime)"/>
+                        </hlayout>
+                        <separator />
+                        <button id="searchSimilarLegsBtn" width="115px" label="Search" onClick="@command('findSimilarFlights')" />
+                    </vlayout>
+                    <separator />
+                    <label value="@load(vm.message)" />
+                    <separator />
+                    <listbox id="similarFlights" height="200px" model="@bind(vm.similarFlights)"
+                             emptyMessage="Nothing found."
+                             style="margin-top:10px">
+                        <listhead>
+                            <listheader label="Id"/>
+                            <listheader label="TailNo"/>
+                            <listheader label="Origin ICAO"/>
+                            <listheader label="Origin IATA"/>
+                            <listheader label="Destination ICAO"/>
+                            <listheader label="Destination IATA"/>
+                            <listheader label="Departure"/>
+                            <listheader label="Arrival"/>
+                        </listhead>
+                        <template name="model">
+                            <listitem>
+                                <listcell label="@bind(each.id)"/>
+                                <listcell label="@bind(each.aircraftRegNum)"/>
+                                <listcell label="@bind(each.origin.icaoCode)"/>
+                                <listcell label="@bind(each.origin.iataCode)"/>
+                                <listcell label="@bind(each.destination.icaoCode)"/>
+                                <listcell label="@bind(each.destination.iataCode)"/>
+                                <listcell label="@bind(each.startDate)"/>
+                                <listcell label="@bind(each.endDate)"/>
+                            </listitem>
+                        </template>
+                    </listbox>
+                </tabpanel>
+            </tabpanels>
+        </tabbox>
+    </window>
+</zk>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Put Sensor Data</title>
+</head>
+<body>
+<script type="text/javascript">
+    function sendPutRequest(url) {
+        var xmlHttp = new XMLHttpRequest();
+        var mimeType = "application/json";
+        xmlHttp.open('PUT', url, true);  // true : async false: sync
+        xmlHttp.setRequestHeader('Content-Type', mimeType);
+        xmlHttp.send(null);
+    }
+    function OnSubmitForm()
+    {
+        var url = "rest/admin/flight/times/delta?value=" + document.putForm.v.value;
+        sendPutRequest(url);
+    }
+</script>
+<form name="putForm" action="rest/admin/flight/times/delta" method="PUT">
+    Value: <input type="text" name="v"><br>
+    <input type="button" value="Submit" onclick="OnSubmitForm();">
+</form>
+</body>
+</html>

@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-lazy="false">
+
+    <class name="cselp.domain.local.AirportCode"
+           table="AIRPORT_CODES" entity-name="LAirportCode">
+        <id column="AIRPORT_CODES_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">AIRPORT_CODES_SQ</param>
+            </generator>
+        </id>
+        <property column="ICAO" name="icaoCode" length="4" type="string"/>
+        <property column="IATA" name="iataCode" length="3" type="string"/>
+        <property column="ICAO_CYR" name="icaoCyrillicCode" length="4" type="string"/>
+        <property column="CRT" name="crtCode" length="3" type="string"/>
+        <property column="APT_ZONE" name="aptZone" type="java.lang.Long"/>
+    </class>
+
+    <class name="cselp.domain.local.Division" table="DIVISION" entity-name="Division">
+        <id column="DIVISION_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">DIVISION_SQ</param>
+            </generator>
+        </id>
+        <property column="NAME" name="name" length="64" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.local.DivisionRole" table="DIVISION_ROLE" entity-name="DivisionRole">
+        <id column="DIVISION_ROLE_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="DIVISION_ROLE" name="role" length="128" type="java.lang.String"/>
+        <property column="DESCRIPTION" name="description" length="128" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.local.Division" table="DIVISION" entity-name="DivisionFull">
+        <id column="DIVISION_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">DIVISION_SQ</param>
+            </generator>
+        </id>
+        <property column="NAME" name="name" length="64" type="java.lang.String"/>
+        <bag name="squadrons" lazy="false" cascade="none" order-by="NAME" fetch="subselect" inverse="true">
+            <key update="false">
+                <column name="DIVISION_ID"/>
+            </key>
+            <one-to-many entity-name="Squadron"/>
+        </bag>
+    </class>
+
+    <class name="cselp.domain.local.Squadron" table="SQUADRON" entity-name="Squadron">
+        <id column="SQUADRON_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">SQUADRON_SQ</param>
+            </generator>
+        </id>
+        <property column="DIVISION_ID" name="divisionId" type="java.lang.Long"/>
+        <property column="NAME" name="name" length="64" type="java.lang.String"/>
+        <many-to-one name="parent" entity-name="DivisionFull" column="DIVISION_ID" not-null="true"
+                     update="false" insert="false"/>
+    </class>
+
+    <class name="cselp.domain.local.Person" table="PERSON" entity-name="Person" dynamic-update="true">
+        <id column="PERSON_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">PERSON_SQ</param>
+            </generator>
+        </id>
+        <property column="SQUADRON_ID" name="squadronId" type="java.lang.Long"/>
+        <property column="DIVISION_ROLE_ID" name="divisionRoleId" type="java.lang.Long"/>
+        <property column="APP_ROLE_ID" name="appRoleId" type="java.lang.Long"/>
+        <property column="TAB_NO" name="tabNum" length="32" type="java.lang.String"/>
+        <property column="FIRST_NAME" name="firstName" length="64" type="java.lang.String"/>
+        <property column="LAST_NAME" name="lastName" length="64" type="java.lang.String"/>
+        <property column="FULL_NAME" name="fullName" length="128" type="java.lang.String"/>
+        <property column="GENDER" name="gender" length="1" type="java.lang.String"/>
+        <property column="BIRTH_DATE" name="birthDate" type="java.sql.Date"/>
+        <property column="DIVISION_ROLE" name="divisionRole" length="128" type="java.lang.String"/>
+        <one-to-one name="personMinimum" entity-name="PersonMinimum" cascade="none" lazy="false" outer-join="true" fetch="join"/>
+    </class>
+
+    <class name="cselp.domain.local.PersonMinimum" table="PERSON_MINIMUM" entity-name="PersonMinimum"
+           dynamic-update="true">
+        <id column="PERSON_ID" name="personId" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="LANDING_VIS_VERTICAL" name="landingVisVertical" type="java.lang.Double"/>
+        <property column="LANDING_VIS_HORIZONTAL" name="landingVisHorizontal" type="java.lang.Double"/>
+        <property column="TAKE_OFF_VIS_HORIZONTAL" name="takeOffVisHorizontal" type="java.lang.Double"/>
+    </class>
+
+    <class name="cselp.domain.local.Trip" table="OS_FLIGHT" entity-name="Trip">
+        <id column="OS_FLIGHT_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">OS_FLIGHT_SQ</param>
+            </generator>
+        </id>
+        <property column="CARRIER" name="carrier" length="2" type="java.lang.String"/>
+        <property column="FLIGHT_NO" name="flightNum" type="java.lang.String"/>
+        <property column="FLIGHT_DATE" name="flightDate" type="java.sql.Timestamp"/>
+        <property column="ACTUAL_DATE" name="actualDate" type="java.sql.Timestamp"/>
+        <property column="TAIL_NO" name="tailNum" length="6" type="java.lang.String"/>
+        <property column="ORIGIN" name="origin" length="32" type="java.lang.String"/>
+        <property column="DESTINATION" name="destination" length="32" type="java.lang.String"/>
+        <property column="FLIGHT_KIND" name="flightKind" length="3" type="java.lang.String"/>
+        <bag name="legs" lazy="false" cascade="none" fetch="subselect">
+            <key update="false">
+                <column name="OS_FLIGHT_ID"/>
+            </key>
+            <one-to-many entity-name="Leg"/>
+        </bag>
+    </class>
+
+    <class name="cselp.domain.local.Trip" table="OS_FLIGHT" entity-name="TripLight">
+        <id column="OS_FLIGHT_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="CARRIER" name="carrier" length="2" type="java.lang.String"/>
+        <property column="FLIGHT_NO" name="flightNum" type="java.lang.String"/>
+        <property column="FLIGHT_DATE" name="flightDate" type="java.sql.Timestamp"/>
+        <property column="ACTUAL_DATE" name="actualDate" type="java.sql.Timestamp"/>
+        <property column="TAIL_NO" name="tailNum" length="6" type="java.lang.String"/>
+        <property column="ORIGIN" name="origin" length="32" type="java.lang.String"/>
+        <property column="DESTINATION" name="destination" length="32" type="java.lang.String"/>
+        <property column="FLIGHT_KIND" name="flightKind" length="3" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.local.Leg" table="LEG" entity-name="Leg" dynamic-update="true">
+        <id column="LEG_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">LEG_SQ</param>
+            </generator>
+        </id>
+        <property column="OS_FLIGHT_ID" name="tripId" type="java.lang.Long"/>
+        <property column="FLIGHT_ID" name="flightId" type="java.lang.Long"/>
+        <property column="TAIL_NO" name="tailNum" length="6" type="java.lang.String"/>
+        <property column="ORIGIN" name="origin" length="64" type="java.lang.String"/>
+        <property column="DESTINATION" name="destination" length="64" type="java.lang.String"/>
+        <property column="ORIGIN_ICAO" name="originIcao" length="4" type="java.lang.String"/>
+        <property column="DESTINATION_ICAO" name="destinationIcao" length="4" type="java.lang.String"/>
+        <property column="ORIGIN_IATA" name="originIata" length="3" type="java.lang.String"/>
+        <property column="DESTINATION_IATA" name="destinationIata" length="3" type="java.lang.String"/>
+        <property column="DEPARTURE_PLAN" name="departurePlan" type="java.sql.Timestamp"/>
+        <property column="DEPARTURE_FACT" name="departureFact" type="java.sql.Timestamp"/>
+        <property column="ARRIVAL_PLAN" name="arrivalPlan" type="java.sql.Timestamp"/>
+        <property column="ARRIVAL_FACT" name="arrivalFact" type="java.sql.Timestamp"/>
+        <property column="TAKE_OFF" name="takeOff" type="java.sql.Timestamp"/>
+        <property column="TOUCH_DOWN" name="touchDown" type="java.sql.Timestamp"/>
+        <property column="LAST_LOG_TS" name="lastLogDate" type="java.sql.Timestamp"/>
+        <bag name="crews" lazy="false" cascade="none" fetch="subselect">
+            <key update="false">
+                <column name="LEG_ID"/>
+            </key>
+            <one-to-many entity-name="Crew"/>
+        </bag>
+    </class>
+
+    <class name="cselp.domain.local.Leg" table="LEG" entity-name="LegLight" dynamic-update="true">
+        <id column="LEG_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">LEG_SQ</param>
+            </generator>
+        </id>
+        <property column="OS_FLIGHT_ID" name="tripId" type="java.lang.Long"/>
+        <property column="FLIGHT_ID" name="flightId" type="java.lang.Long"/>
+        <property column="TAIL_NO" name="tailNum" length="6" type="java.lang.String"/>
+        <property column="ORIGIN" name="origin" length="64" type="java.lang.String"/>
+        <property column="DESTINATION" name="destination" length="64" type="java.lang.String"/>
+        <property column="ORIGIN_ICAO" name="originIcao" length="4" type="java.lang.String"/>
+        <property column="DESTINATION_ICAO" name="destinationIcao" length="4" type="java.lang.String"/>
+        <property column="ORIGIN_IATA" name="originIata" length="3" type="java.lang.String"/>
+        <property column="DESTINATION_IATA" name="destinationIata" length="3" type="java.lang.String"/>
+        <property column="DEPARTURE_PLAN" name="departurePlan" type="java.sql.Timestamp"/>
+        <property column="DEPARTURE_FACT" name="departureFact" type="java.sql.Timestamp"/>
+        <property column="ARRIVAL_PLAN" name="arrivalPlan" type="java.sql.Timestamp"/>
+        <property column="ARRIVAL_FACT" name="arrivalFact" type="java.sql.Timestamp"/>
+        <property column="TAKE_OFF" name="takeOff" type="java.sql.Timestamp"/>
+        <property column="TOUCH_DOWN" name="touchDown" type="java.sql.Timestamp"/>
+        <property column="LAST_LOG_TS" name="lastLogDate" type="java.sql.Timestamp"/>
+    </class>
+
+    <class name="cselp.domain.local.Leg" table="LEG" entity-name="LegLink">
+        <id column="LEG_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="FLIGHT_ID" name="flightId" type="java.lang.Long"/>
+    </class>
+
+    <class name="cselp.domain.local.Crew" table="CREW_TASK" entity-name="Crew">
+        <id column="CREW_TASK_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">CREW_SQ</param>
+            </generator>
+        </id>
+        <property column="LEG_ID" name="legId" type="java.lang.Long"/>
+        <property column="SQUADRON_ID" name="squadronId" type="java.lang.Long"/>
+        <property column="TASK_NUM" name="taskNum" length="32" type="java.lang.String"/>
+        <property column="TASK_DATE" name="taskDate" type="java.sql.Timestamp"/>
+        <property column="TASK_TYPE" name="type" length="32" type="java.lang.String"/>
+        <property column="MEMBER_CNT" name="memberCount" type="java.lang.Integer"/>
+        <bag name="members" lazy="false" cascade="none" fetch="subselect">
+            <key update="false">
+                <column name="CREW_TASK_ID"/>
+            </key>
+            <one-to-many entity-name="CrewMember"/>
+        </bag>
+    </class>
+
+    <class name="cselp.domain.local.Crew" table="CREW_TASK" entity-name="CrewLight">
+        <id column="CREW_TASK_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">CREW_SQ</param>
+            </generator>
+        </id>
+        <property column="LEG_ID" name="legId" type="java.lang.Long"/>
+        <property column="SQUADRON_ID" name="squadronId" type="java.lang.Long"/>
+        <property column="TASK_NUM" name="taskNum" length="32" type="java.lang.String"/>
+        <property column="TASK_DATE" name="taskDate" type="java.sql.Timestamp"/>
+        <property column="TASK_TYPE" name="type" length="32" type="java.lang.String"/>
+        <property column="MEMBER_CNT" name="memberCount" type="java.lang.Integer"/>
+    </class>
+
+    <class name="cselp.domain.local.CrewMember" table="CREW_MEMBER" entity-name="CrewMember">
+        <composite-id>
+            <key-property column="CREW_TASK_ID" name="crewId" type="java.lang.Long"/>
+            <key-property column="PERSON_ID" name="personId" type="java.lang.Long"/>
+        </composite-id>
+        <property column="FLIGHT_ROLE" name="flightRole" length="128" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.local.AircraftRegNumMap" table="AIRCRAFT_REG_NUM_MAP"
+           entity-name="AircraftRegNumMap">
+        <composite-id>
+            <key-property column="REG_NUM" name="regNum" type="java.lang.String"/>
+            <key-property column="ALTERNATE_REG_NUM" name="alternateRegNum" type="java.lang.String"/>
+        </composite-id>
+        <property column="PRIORITY" name="priority" type="java.lang.Short"/>
+    </class>
+
+    <class name="cselp.domain.local.EventTypeScore"
+           table="EVENT_TYPE_SCORES_MAP" entity-name="EventTypeScore">
+        <composite-id>
+            <key-property column="EVT_ID" name="eventTypeId" type="java.lang.Long"/>
+            <key-property column="SEV_ID" name="severityId" type="java.lang.Short"/>
+        </composite-id>
+        <property column="score" name="score" type="java.lang.Integer"/>
+        <property column="coefficient" name="coefficient" type="java.lang.Double"/>
+    </class>
+
+    <class name="cselp.domain.local.EventScore" table="EVENT_SCORES" entity-name="EventScore">
+        <id column="EVN_ID" name="eventId" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="EVT_ID" name="eventTypeId" type="java.lang.Long"/>
+        <property column="EVT_NAME" name="eventTypeName" length="50" type="java.lang.String"/>
+        <property column="FLI_ID" name="flightId" type="java.lang.Long"/>
+        <property column="ACR_ID" name="aircraftId" type="java.lang.Long"/>
+        <property column="APT_ID_TAKE_OFF" name="airportIdTakeOff" type="java.lang.Long"/>
+        <property column="APT_ID_LANDING" name="airportIdLanding" type="java.lang.Long"/>
+        <property column="PHA_ID" name="phaseId" type="java.lang.Short"/>
+        <property column="PHA_CODE" name="phaseCode" length="3" type="java.lang.String"/>
+        <property column="SEV_ID" name="severityId" type="java.lang.Short"/>
+        <property column="SCORE" name="score" type="java.lang.Integer"/>
+        <property column="PRIMARY_PRM_NAME" name="primaryParameterName" length="25" type="java.lang.String"/>
+        <property column="XPS_VALUE" name="value" type="java.lang.Double"/>
+        <property column="EVN_TIME" name="eventTime" type="java.sql.Timestamp"/>
+        <property column="FLI_DATE" name="flightDate" type="java.sql.Timestamp"/>
+    </class>
+
+    <class name="cselp.domain.local.EventScore" table="EVENT_SCORES" entity-name="EventScoreUpdater">
+        <id column="EVN_ID" name="eventId" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="EVT_ID" name="eventTypeId" type="java.lang.Long"/>
+        <property column="EVT_NAME" name="eventTypeName" length="50" type="java.lang.String"/>
+        <property column="FLI_ID" name="flightId" type="java.lang.Long"/>
+        <property column="FLI_DATE" name="flightDate" type="java.sql.Timestamp"/>
+        <property column="PHA_ID" name="phaseId" type="java.lang.Short"/>
+        <property column="PHA_CODE" name="phaseCode" length="3" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.local.LogMessage" table="LOGS" entity-name="LogMessage">
+        <id column="LOGS_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">LOGS_SQ</param>
+            </generator>
+        </id>
+        <property column="SOURCE" name="source" length="64" type="java.lang.String"/>
+        <property column="CLASSIFIER" name="classifier" length="128" type="java.lang.String"/>
+        <property column="ERROR_CODE" name="errorCode" length="64" type="java.lang.String"/>
+        <property column="LOG_TS" name="logTime" type="java.sql.Timestamp"/>
+        <property column="PROPERTIES" name="properties" length="1024" type="java.lang.String"/>
+        <property column="LEVEL" name="level" type="string"/>
+    </class>
+
+    <class name="cselp.domain.local.LoadedFlight" table="LOADED_FLIGHTS" entity-name="LoadedFlight">
+        <id column="LOADED_FLIGHTS_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">LOADED_FLIGHTS_SQ</param>
+            </generator>
+        </id>
+        <property column="FILE_NAME" name="fileName" length="128" type="java.lang.String"/>
+        <property column="START_TS" name="startTime" type="java.sql.Timestamp"/>
+        <property column="END_TS" name="endTime" type="java.sql.Timestamp"/>
+        <property column="STATUS" name="status" length="32" type="java.lang.String"/>
+        <property column="MESSAGE" name="message" length="1024" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.local.UserDto" table="[USER]" entity-name="User">
+        <id column="USER_ID" name="id" type="java.lang.Long">
+            <generator class="identity">
+                <param name="sequence">USER_SQ</param>
+            </generator>
+        </id>
+        <property column="ROLE_ID" name="roleId" type="java.lang.Long"/>
+        <property column="USER_NAME" name="name" length="64" type="java.lang.String"/>
+        <property column="PASSWORD" name="password" length="128" type="java.lang.String"/>
+        <property column="FIRST_NAME" name="firstName" length="64" type="java.lang.String"/>
+        <property column="LAST_NAME" name="lastName" length="64" type="java.lang.String"/>
+        <property column="MID_NAME" name="midName" length="64" type="java.lang.String"/>
+        <property column="LDAP_DN" name="ldapDn" length="256" type="java.lang.String"/>
+        <property column="PERSON_ID" name="personId" type="java.lang.Long"/>
+        <property column="ACTIVE" name="active" type="java.lang.Boolean"/>
+    </class>
+
+    <query name="findUserByName">
+        <![CDATA[
+            from User where name = :name
+        ]]>
+    </query>
+
+    <query name="findUserByPerson">
+        <![CDATA[
+            from User where personId = :personId
+        ]]>
+    </query>
+
+    <query name="findDivision">
+        <![CDATA[
+            from Division where name = :name
+        ]]>
+    </query>
+
+    <query name="findDivisionFull">
+        <![CDATA[
+            from DivisionFull where name = :name
+        ]]>
+    </query>
+
+    <query name="findSquadron">
+        <![CDATA[
+            from Squadron where divisionId = :divisionId and name = :name
+        ]]>
+    </query>
+
+    <query name="findSquadronIdsForDivision">
+        <![CDATA[
+            select id from Squadron where divisionId = :divisionId
+        ]]>
+    </query>
+
+    <query name="findPersonByTabNum">
+        <![CDATA[
+            from Person where tabNum = :tabNum
+        ]]>
+    </query>
+
+    <query name="findTrip">
+        <![CDATA[
+            from Trip where carrier = :carrier and flightNum = :flightNum and
+                flightDate = :flightDate and actualDate = :actualDate and tailNum = :tailNum and
+                origin = :origin and destination = :destination and flightKind = :flightKind
+        ]]>
+    </query>
+
+    <query name="findTripRange">
+        <![CDATA[
+            from Trip where flightDate >= :from and flightDate < :to order by flightDate
+        ]]>
+    </query>
+
+    <query name="findTripByIds">
+        <![CDATA[
+            from Trip where id in (:ids)
+        ]]>
+    </query>
+
+    <query name="findTripLightByIds">
+        <![CDATA[
+            from TripLight where id in (:ids)
+        ]]>
+    </query>
+
+    <query name="findLastLegs">
+        <![CDATA[
+            select l from Leg l, Crew c, CrewMember cm
+                where l.id = c.legId and c.id=cm.crewId and cm.personId = :personId
+                order by l.departurePlan desc
+        ]]>
+    </query>
+
+    <query name="findUnlinkedLegs">
+        <![CDATA[
+            from LegLight where flightId is null and departurePlan >= :dueDate
+            order by id
+        ]]>
+    </query>
+
+    <query name="findUnlinkedLegsRange">
+        <![CDATA[
+            from LegLight where flightId is null and departurePlan >= :from and departurePlan <= :to
+            order by id
+        ]]>
+    </query>
+
+    <query name="findLegsRange">
+        <![CDATA[
+            from LegLight where departurePlan >= :from and departurePlan <= :to
+            order by id
+        ]]>
+    </query>
+
+    <query name="countOldUnlinkedLegs">
+        <![CDATA[
+            select count(*) from Leg where flightId is null and departurePlan < :upDate
+        ]]>
+    </query>
+
+    <query name="findDivisions">
+        <![CDATA[
+            from DivisionFull order by name
+        ]]>
+    </query>
+
+    <query name="findDivisionRoles">
+        <![CDATA[
+            from DivisionRole order by id
+        ]]>
+    </query>
+
+    <query name="findAircraftRegNumMaps">
+        <![CDATA[
+            from AircraftRegNumMap order by priority
+        ]]>
+    </query>
+
+    <query name="getAllEventTypeScores">
+        <![CDATA[
+            from EventTypeScore order by eventTypeId, severityId
+        ]]>
+    </query>
+
+    <query name="findAirportCodeByAllCodes">
+        <![CDATA[
+            from LAirportCode where icaoCode = :icaoCode and iataCode = :iataCode
+        ]]>
+    </query>
+
+    <query name="findAirportCodeByIcao">
+        <![CDATA[
+            from LAirportCode where icaoCode = :icaoCode
+        ]]>
+    </query>
+
+    <query name="findAirportCodeByIata">
+        <![CDATA[
+            from LAirportCode where iataCode = :iataCode
+        ]]>
+    </query>
+
+    <query name="findAllAirportCodes">
+        <![CDATA[
+            from LAirportCode
+        ]]>
+    </query>
+
+    <query name="findLoadedFlights">
+        <![CDATA[
+            from LoadedFlight where fileName = :fileName
+        ]]>
+    </query>
+
+    <query name="findEventScoresByFlight">
+        <![CDATA[
+            from EventScore where flightId = :flightId
+        ]]>
+    </query>
+
+    <query name="findEventScoresByFlightIds">
+        <![CDATA[
+            from EventScore where flightId in (:flightIds)
+        ]]>
+    </query>
+
+    <query name="findPersonByIds">
+        <![CDATA[
+            from Person p left join fetch p.personMinimum pm where p.id in (:ids)
+        ]]>
+    </query>
+
+    <query name="findIncompleteEventScores">
+        <![CDATA[
+            from EventScoreUpdater where (eventTypeName is null or flightDate is null or phaseCode is null)
+                and eventId >= :firstId order by eventId
+        ]]>
+    </query>
+
+    <query name="findPersonIdsForLegs">
+        <![CDATA[
+            select cm.personId from Leg l join l.crews c join c.members cm
+                    where l.id in (:ids)
+        ]]>
+    </query>
+
+    <query name="findSumSquadronLegs">
+        <![CDATA[
+            select count(*) as sum, MONTH(l.departurePlan) as month, YEAR(l.departurePlan) as year
+            from Leg l join l.crews c
+                    where c.squadronId = :squadronId
+                group by MONTH(l.departurePlan), YEAR(l.departurePlan)
+                order by YEAR(l.departurePlan), MONTH(l.departurePlan)
+        ]]>
+    </query>
+
+    <query name="findSquadronPerson">
+        <![CDATA[
+            from Person p left join fetch p.personMinimum pm where p.squadronId = :squadronId
+        ]]>
+    </query>
+
+    <query name="findTopRoutesStat">
+        <![CDATA[
+            select count(*) as count, l.origin as origin, l.destination as destination
+            from Leg l, Crew c, CrewMember cm
+                where l.id = c.legId and c.id=cm.crewId and cm.personId = :personId
+                and l.departurePlan >= :from
+            group by l.origin, l.destination
+            order by count(*) desc
+        ]]>
+    </query>
+
+    <query name="findTopPlanesStat">
+        <![CDATA[
+            select count(*) as count, l.tailNum as tailNum from Leg l, Crew c, CrewMember cm
+                where l.id = c.legId and c.id=cm.crewId and cm.personId = :personId
+                and l.departurePlan >= :from
+            group by l.tailNum
+            order by count(*) desc
+        ]]>
+    </query>
+
+</hibernate-mapping>

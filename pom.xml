@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>akr</groupId>
+    <artifactId>cselp</artifactId>
+    <name>OptPolet web Application</name>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <properties>
+        <build.number>SNAPSHOT</build.number>
+        <build.commit>unknown</build.commit>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.version>4.0.7.RELEASE</spring.version>
+        <hibernate.version>4.2.0.Final</hibernate.version>
+        <apache.logging.version>1.2</apache.logging.version>
+        <apache.beanutils.version>1.9.2</apache.beanutils.version>
+        <apache.configuration.version>1.7</apache.configuration.version>
+        <apache.activemq.version>5.12.0</apache.activemq.version>
+        <apache.lang.version>3.1</apache.lang.version>
+        <apache.log4j.version>1.2.16</apache.log4j.version>
+        <commons-io>1.3.1</commons-io>
+        <commons-collections>3.2.1</commons-collections>
+        <aspectj.version>1.7.2</aspectj.version>
+        <junit.version>4.9</junit.version>
+        <jackson.version>2.4.0</jackson.version>
+        <redis.clients.version>2.7.2</redis.clients.version>
+        <zk.version>7.0.3</zk.version>
+        <joda-time.version>2.9.4</joda-time.version>
+        <crashub.version>1.3.2</crashub.version>
+        <ehcache.version>2.7.0</ehcache.version>
+        <!--default environment-->
+        <env>dev</env>
+    </properties>
+
+    <build>
+        <finalName>cselp</finalName>
+
+        <resources>
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+            </resource>
+
+            <resource>
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>**/application.properties</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+
+            <resource>
+                <directory>${basedir}/src/main/java</directory>
+                <includes>
+                    <include>**/*.hbm.xml</include>
+                </includes>
+            </resource>
+
+        </resources>
+
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0-alpha-2</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>src/main/resources/environments/env.properties</file>
+                                <file>src/main/resources/environments/${env}/env.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <outputFileNameMapping>@{artifactId}@.@{extension}@</outputFileNameMapping>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                        <manifestEntries>
+                            <Specification-Title>${project.name}</Specification-Title>
+                            <Specification-Version>${project.version}</Specification-Version>
+                            <Implementation-Version>${build.number}</Implementation-Version>
+                            <Git-commit>${build.commit}</Git-commit>
+                            <Build-timestamp>${app.build.timestamp}</Build-timestamp>
+                        </manifestEntries>
+                    </archive>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp</directory>
+                            <includes>
+                                <include>*.jsp</include>
+                                <include>*.jspf</include>
+                            </includes>
+                            <filtering>true</filtering>
+                        </resource>
+                        <resource>
+                            <directory>${basedir}/src/main/webapp</directory>
+                            <includes>
+                                <include>**/*.xml</include>
+                            </includes>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <!--<execution>
+                        <id>bn-001</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <buildNumberPropertyName>buildDate</buildNumberPropertyName>
+                            <doUpdate>false</doUpdate>
+                            <format>{0,date,yyyy.MM.dd-HH:mm:ss}</format>
+                            <items>
+                                <item>timestamp</item>
+                            </items>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>bn-002</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                        <configuration>
+                            <buildNumberPropertyName>build.timestamp</buildNumberPropertyName>
+                            <doUpdate>false</doUpdate>
+                            <format>{0,date,yyyyMMddHHmmss}</format>
+                            <items>
+                                <item>timestamp</item>
+                            </items>
+                        </configuration>
+                    </execution>-->
+                    <execution>
+                        <id>bn-003</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create-timestamp</goal>
+                        </goals>
+                        <configuration>
+                            <timestampPropertyName>app.build.timestamp</timestampPropertyName>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- REST documentation parse -->
+            <!--<plugin>
+                <groupId>org.bsc.maven</groupId>
+                <artifactId>maven-processor-plugin</artifactId>
+                <version>2.2.4</version>
+
+                <configuration>
+                    <outputDiagnostics>true</outputDiagnostics>
+                    <processors>
+                        <processor>org.versly.rest.wsdoc.AnnotationProcessor</processor>
+                    </processors>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>org.versly</groupId>
+                        <artifactId>versly-wsdoc</artifactId>
+                        <version>1.1.007</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin> -->
+            <!-- REST HTML documentation generation. Possibly in a different POM
+             than the parse step above. -->
+            <!--<plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>org.versly.rest.wsdoc.RestDocAssembler</mainClass>
+                            <arguments>
+                            <argument>${project.build.directory}/classes</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin> -->
+
+            <!--Generation of swagger documentation in compilation phase -->
+            <plugin>
+                <groupId>com.github.kongchen</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <apiSources>
+                        <apiSource>
+                            <springmvc>true</springmvc>
+                            <locations>cselp.rest</locations>
+                            <schemes>http,https</schemes>
+                            <host>localhost:8080</host>
+                            <basePath>/cselp/rest</basePath>
+                            <info>
+                                <title>Swagger Maven Plugin Sample</title>
+                                <version>v1</version>
+                                <!-- use markdown here because I'm using markdown for output,
+                                if you need to use html or other markup language, you need to use your target language,
+                                 and note escape your description for xml -->
+                                <description>
+                                    Akrsf swagger documentation.
+                                </description>
+                                <termsOfService>
+                                    http://www.github.com/kongchen/swagger-maven-plugin
+                                </termsOfService>
+                                <contact>
+                                    <email>kongchen@gmail.com</email>
+                                    <name>Kong Chen</name>
+                                    <url>http://kongch.com</url>
+                                </contact>
+                                <license>
+                                    <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+                                    <name>Apache 2.0</name>
+                                </license>
+                            </info>
+                            <!-- Support classpath or file absolute path here.
+                            1) classpath e.g: "classpath:/markdown.hbs", "classpath:/templates/hello.html"
+                            2) file e.g: "${basedir}/src/main/resources/markdown.hbs",
+                                "${basedir}/src/main/resources/template/hello.html" -->
+                            <templatePath>${basedir}/templates/strapdown.html.hbs</templatePath>
+                            <outputPath>${basedir}/generated/document.html</outputPath>
+
+                            <swaggerDirectory>generated/swagger-ui</swaggerDirectory>
+                        </apiSource>
+                    </apiSources>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!--<dependency>
+            <groupId>org.versly</groupId>
+            <artifactId>versly-wsdoc</artifactId>
+            <version>1.1.007</version>
+            <scope>compile</scope>
+        </dependency>-->
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <version>2.4</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>${apache.logging.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>avalon-framework</groupId>
+                    <artifactId>avalon-framework</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>logkit</groupId>
+                    <artifactId>logkit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io}</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>${apache.log4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${apache.lang.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons-collections}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>${apache.configuration.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${apache.beanutils.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jms</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm-attrs</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>${ehcache.version}</version>
+        </dependency>
+
+        <!--added to marshall objects to json-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!--<dependency>
+            <groupId>postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>9.1-901.jdbc4</version>
+            <scope>test</scope>
+        </dependency>-->
+        <!--replacement for ms sql server driver for tests-->
+        <dependency>
+            <groupId>net.sourceforge.jtds</groupId>
+            <artifactId>jtds</artifactId>
+            <version>1.3.1</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- zkoss dependencies-->
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zkbind</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <!--CE variant-->
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zul</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zkplus</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.zkoss.zk</groupId>
+            <artifactId>zhtml</artifactId>
+            <version>${zk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${apache.activemq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-spring</artifactId>
+            <version>${apache.activemq.version}</version>
+        </dependency>
+        <!--client to use AMQP-->
+        <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>qpid-jms-client</artifactId>
+            <version>0.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.jettison</groupId>
+            <artifactId>jettison</artifactId>
+            <version>1.3.7</version>
+        </dependency>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${redis.clients.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.crashub</groupId>
+            <artifactId>crash.embed.spring</artifactId>
+            <version>${crashub.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.crashub</groupId>
+            <artifactId>crash.cli</artifactId>
+            <version>${crashub.version}</version>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.crashub</groupId>
+            <artifactId>crash.packaging</artifactId>
+            <version>${crashub.version}</version>
+            <type>war</type>
+            <classifier>spring</classifier>
+        </dependency>-->
+        <dependency>
+            <groupId>org.crashub</groupId>
+            <artifactId>crash.connectors.ssh</artifactId>
+            <version>${crashub.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.crashub</groupId>
+            <artifactId>crash.connectors.telnet</artifactId>
+            <version>${crashub.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>1.8.9</version>
+        </dependency>
+
+        <!--springfox-swagger dependency-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-core</artifactId>
+            <scope>compile</scope>
+            <version>1.5.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>${joda-time.version}</version>
+        </dependency>
+
+        <!-- javamelody-core -->
+        <dependency>
+            <groupId>net.bull.javamelody</groupId>
+            <artifactId>javamelody-core</artifactId>
+            <version>1.60.0</version>
+        </dependency>
+        <!-- itext, option to add PDF export -->
+        <dependency>
+            <groupId>com.lowagie</groupId>
+            <artifactId>itext</artifactId>
+            <version>2.1.7</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>bcmail-jdk14</artifactId>
+                    <groupId>bouncycastle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bcprov-jdk14</artifactId>
+                    <groupId>bouncycastle</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>bctsp-jdk14</artifactId>
+                    <groupId>bouncycastle</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+    <pluginRepositories>
+        <!--
+        Maven plugins repository
+        -->
+        <pluginRepository>
+            <id>codehaus.mojo</id>
+            <name>codehaus.mojo</name>
+            <url>https://nexus.codehaus.org/content/repositories/public</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>zkmaven</id>
+            <name>ZK Maven Plugin Repository</name>
+            <url>http://mavensync.zkoss.org/maven2/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <repositories>
+        <repository>
+            <id>codehaus</id>
+            <url>https://nexus.codehaus.org/content/repositories/public</url>
+        </repository>
+
+        <repository>
+            <id>ZK CE</id>
+            <name>ZK CE Repository</name>
+            <url>http://mavensync.zkoss.org/maven2</url>
+        </repository>
+        <repository>
+            <id>ZK EVAL</id>
+            <name>ZK Evaluation Repository</name>
+            <url>http://mavensync.zkoss.org/eval</url>
+        </repository>
+
+        <!--springfox repository-->
+        <repository>
+            <id>jcenter-snapshots</id>
+            <name>jcenter</name>
+            <url>https://jcenter.bintray.com/</url>
+        </repository>
+    </repositories>
+</project>

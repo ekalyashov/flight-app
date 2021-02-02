@@ -1,0 +1,154 @@
+<PERFORMED_FLIGHTS>
+    <FLIGHT>
+        <CARRIER>FV</CARRIER>
+        <FLIGHT_NO>6442</FLIGHT_NO>
+        <FLIGHT_DATE>18.08.2015 01:07</FLIGHT_DATE>
+        <ACTUAL_DATE>18.08.2015 01:07</ACTUAL_DATE>
+        <TAIL_NO>VQ-BAV</TAIL_NO>
+        <ORIGIN>SGC,СУР,USRR,УСРР</ORIGIN>
+        <DESTINATION>LED,ПЛК,ULLI,УЛЛИ</DESTINATION>
+        <FLT_KIND>ВВЛ</FLT_KIND>
+        <LEG>
+            <TAIL_NO>VQ-BAV</TAIL_NO>
+            <ORIGIN>SGC,СУР,USRR,УСРР</ORIGIN>
+            <DESTINATION>LED,ПЛК,ULLI,УЛЛИ</DESTINATION>
+            <DEPARTURE_PLAN>0</DEPARTURE_PLAN>
+            <ARRIVAL_PLAN>0</ARRIVAL_PLAN>
+            <DEPARTURE_FACT>0</DEPARTURE_FACT>
+            <ARRIVAL_FACT>0</ARRIVAL_FACT>
+            <TAKE_OFF>0</TAKE_OFF>
+            <TOUCH_DOWN>0</TOUCH_DOWN>
+            <CREW_TASK>
+                <NO>0817/75</NO>
+                <DATE>17.08.2015 22:30</DATE>
+                <TYPE>Экипаж</TYPE>
+                <MEMBER_NR>2</MEMBER_NR>
+                <DIVISION>
+                    <NO>АЭ 3</NO>
+                    <NAME>ЛО 1</NAME>
+                </DIVISION>
+                <MEMBERS>
+                    <MEMBER>
+                        <NO>66926</NO>
+                        <FULL_NAME>Максименко Олег Геннадьевич</FULL_NAME>
+                        <DIVISION>
+                            <NO>АЭ 3</NO>
+                            <NAME>ЛО 1</NAME>
+                        </DIVISION>
+                        <GENDER>M</GENDER>
+                        <FIRST_NAME>OLEG</FIRST_NAME>
+                        <LAST_NAME>MAXIMENKO</LAST_NAME>
+                        <DATE_OF_BIRTH>1987-12-25</DATE_OF_BIRTH>
+                        <MINIMUMS>
+                            <LANDING_VIS_VERTICAL>15</LANDING_VIS_VERTICAL>
+                            <LANDING_VIS_HORIZONTAL>175</LANDING_VIS_HORIZONTAL>
+                            <TAKE_OFF_VIS_HORIZONTAL>150</TAKE_OFF_VIS_HORIZONTAL>
+                        </MINIMUMS>
+                    </MEMBER>
+                    <LEG_TYPE>CREW</LEG_TYPE>
+                    <ROLE>
+                        <FLIGHT_ROLE>Командир воздушного судна</FLIGHT_ROLE>
+                        <DIVISION_ROLE>Командир ВС А-319/320/321</DIVISION_ROLE>
+                    </ROLE>
+                    <DUTY_TYPE>COCPIT</DUTY_TYPE>
+                </MEMBERS>
+                <MEMBERS>
+                    <MEMBER>
+                        <NO>87171</NO>
+                        <FULL_NAME>Ковылин Алексей Владимирович</FULL_NAME>
+                        <DIVISION>
+                            <NO>АЭ 3</NO>
+                            <NAME>ЛО 1</NAME>
+                        </DIVISION>
+                        <GENDER>M</GENDER>
+                        <FIRST_NAME>ALEKSEI</FIRST_NAME>
+                        <LAST_NAME>KOVYLIN</LAST_NAME>
+                        <DATE_OF_BIRTH>1991-03-20</DATE_OF_BIRTH>
+                        <MINIMUMS>
+                            <LANDING_VIS_VERTICAL>15</LANDING_VIS_VERTICAL>
+                            <LANDING_VIS_HORIZONTAL>175</LANDING_VIS_HORIZONTAL>
+                            <TAKE_OFF_VIS_HORIZONTAL>150</TAKE_OFF_VIS_HORIZONTAL>
+                        </MINIMUMS>
+                    </MEMBER>
+                    <LEG_TYPE>CREW</LEG_TYPE>
+                    <ROLE>
+                        <FLIGHT_ROLE>Второй пилот</FLIGHT_ROLE>
+                        <DIVISION_ROLE>Второй пилот ВС А-319/320/321</DIVISION_ROLE>
+                    </ROLE>
+                    <DUTY_TYPE>COCPIT</DUTY_TYPE>
+                </MEMBERS>
+            </CREW_TASK>
+        </LEG>
+        <LEG>
+            <TAIL_NO>VQ-BAV</TAIL_NO>
+            <ORIGIN>LED,ПЛК,ULLI,УЛЛИ</ORIGIN>
+            <DESTINATION>SGC,СУР,USRR,УСРР</DESTINATION>
+            <DEPARTURE_PLAN>18.08.2015 04:05</DEPARTURE_PLAN>
+            <ARRIVAL_PLAN>18.08.2015 05:50</ARRIVAL_PLAN>
+            <DEPARTURE_FACT>18.08.2015 04:03</DEPARTURE_FACT>
+            <ARRIVAL_FACT>0</ARRIVAL_FACT>
+            <TAKE_OFF>0</TAKE_OFF>
+            <TOUCH_DOWN>0</TOUCH_DOWN>
+            <CREW_TASK>
+                <NO>0817/75</NO>
+                <DATE>17.08.2015 22:30</DATE>
+                <TYPE>Экипаж</TYPE>
+                <MEMBER_NR>2</MEMBER_NR>
+                <DIVISION>
+                    <NO>АЭ 3</NO>
+                    <NAME>ЛО 1</NAME>
+                </DIVISION>
+                <MEMBERS>
+                    <MEMBER>
+                        <NO>66926</NO>
+                        <FULL_NAME>Максименко Олег Геннадьевич</FULL_NAME>
+                        <DIVISION>
+                            <NO>АЭ 3</NO>
+                            <NAME>ЛО 1</NAME>
+                        </DIVISION>
+                        <GENDER>M</GENDER>
+                        <FIRST_NAME>OLEG</FIRST_NAME>
+                        <LAST_NAME>MAXIMENKO</LAST_NAME>
+                        <DATE_OF_BIRTH>1987-12-25</DATE_OF_BIRTH>
+                        <MINIMUMS>
+                            <LANDING_VIS_VERTICAL>15</LANDING_VIS_VERTICAL>
+                            <LANDING_VIS_HORIZONTAL>175</LANDING_VIS_HORIZONTAL>
+                            <TAKE_OFF_VIS_HORIZONTAL>150</TAKE_OFF_VIS_HORIZONTAL>
+                        </MINIMUMS>
+                    </MEMBER>
+                    <LEG_TYPE>CREW</LEG_TYPE>
+                    <ROLE>
+                        <FLIGHT_ROLE>Командир воздушного судна</FLIGHT_ROLE>
+                        <DIVISION_ROLE>Командир ВС А-319/320/321</DIVISION_ROLE>
+                    </ROLE>
+                    <DUTY_TYPE>COCPIT</DUTY_TYPE>
+                </MEMBERS>
+                <MEMBERS>
+                    <MEMBER>
+                        <NO>87171</NO>
+                        <FULL_NAME>Ковылин Алексей Владимирович</FULL_NAME>
+                        <DIVISION>
+                            <NO>АЭ 3</NO>
+                            <NAME>ЛО 1</NAME>
+                        </DIVISION>
+                        <GENDER>M</GENDER>
+                        <FIRST_NAME>ALEKSEI</FIRST_NAME>
+                        <LAST_NAME>KOVYLIN</LAST_NAME>
+                        <DATE_OF_BIRTH>1991-03-20</DATE_OF_BIRTH>
+                        <MINIMUMS>
+                            <LANDING_VIS_VERTICAL>15</LANDING_VIS_VERTICAL>
+                            <LANDING_VIS_HORIZONTAL>175</LANDING_VIS_HORIZONTAL>
+                            <TAKE_OFF_VIS_HORIZONTAL>150</TAKE_OFF_VIS_HORIZONTAL>
+                        </MINIMUMS>
+                    </MEMBER>
+                    <LEG_TYPE>CREW</LEG_TYPE>
+                    <ROLE>
+                        <FLIGHT_ROLE>Второй пилот</FLIGHT_ROLE>
+                        <DIVISION_ROLE>Второй пилот ВС А-319/320/321</DIVISION_ROLE>
+                    </ROLE>
+                    <DUTY_TYPE>COCPIT</DUTY_TYPE>
+                </MEMBERS>
+            </CREW_TASK>
+        </LEG>
+    </FLIGHT>
+</PERFORMED_FLIGHTS>

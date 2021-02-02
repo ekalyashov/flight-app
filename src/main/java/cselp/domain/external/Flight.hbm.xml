@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "classpath://org/hibernate/hibernate-mapping-3.0.dtd">
+<hibernate-mapping default-lazy="false">
+
+    <class name="cselp.domain.external.Airport"
+           table="APT_AIRPORT" entity-name="Airport">
+        <id column="APT_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="APT_ICAO_CODE" name="icaoCode" length="4" type="string"/>
+        <property column="APT_IATA_CODE" name="iataCode" length="3" type="string"/>
+        <property column="APT_NAME" name="name" length="50" type="string"/>
+        <property column="APT_LATITUDE" name="latitude" type="java.lang.Double"/>
+        <property column="APT_LONGITUDE" name="longitude" type="java.lang.Double"/>
+        <property column="APT_USER_MODIFIED" name="userModified" type="java.lang.Boolean"/>
+        <property column="APT_MAG_VAR" name="magVar" type="java.lang.Double"/>
+    </class>
+
+    <class name="cselp.domain.local.AirportCode"
+           table="APT_AIRPORT" entity-name="AirFASEAptCode">
+        <id column="APT_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="APT_ICAO_CODE" name="icaoCode" length="4" type="string"/>
+        <property column="APT_IATA_CODE" name="iataCode" length="3" type="string"/>
+    </class>
+
+    <class name="cselp.domain.external.Airline"
+           table="ALN_AIRLINE" entity-name="Airline">
+        <id column="ALN_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ALN_CODE" name="code" length="3" type="string"/>
+        <property column="ALN_NAME" name="name" length="25" type="string"/>
+    </class>
+
+    <class name="cselp.domain.external.AircraftType"
+           table="ACT_AIRCRAFT_TYPE" entity-name="AircraftType">
+        <id column="ACT_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ACT_TYPE" name="type" length="10" type="string"/>
+        <property column="ACT_MANUFACTURER" name="manufacturer" length="50" type="string"/>
+    </class>
+
+    <class name="cselp.domain.external.EngineType"
+           table="ENG_ENGINE_TYPE" entity-name="EngineType">
+        <id column="ENG_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ENG_TYPE" name="type" length="10" type="string"/>
+        <property column="ENG_DESCRIPTION" name="description" length="50" type="string"/>
+        <property column="ENG_MANUFACTURER" name="manufacturer" length="50" type="string"/>
+    </class>
+
+    <class name="cselp.domain.external.AircraftConfiguration"
+           table="ACC_AIRCRAFT_CONF" entity-name="AircraftConfiguration">
+        <id column="ACC_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ACT_ID" name="typeId" type="java.lang.Long"/>
+        <property column="ENG_ID" name="engineId" type="java.lang.Long"/>
+        <property column="ACC_CONF" name="configuration" length="15" type="string"/>
+        <property column="ACC_DESCRIPTION" name="description" length="30" type="string"/>
+        <property column="ACC_ENGINE_NB" name="engineNum" type="java.lang.Integer"/>
+        <property column="ACC_IDENT_DISCRETE" name="identifierDiscrete" type="java.lang.Integer"/>
+        <many-to-one name="type" entity-name="AircraftType" column="ACT_ID"
+                     lazy="false" not-found="ignore"
+                     unique="true" not-null="false" insert="false" update="false"/>
+        <many-to-one name="engine" entity-name="EngineType" column="ENG_ID"
+                     lazy="false" not-found="ignore"
+                     unique="true" not-null="false" insert="false" update="false"/>
+    </class>
+
+    <class name="cselp.domain.external.Aircraft"
+           table="AIRCRAFT" entity-name="Aircraft">
+        <id column="ACR_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ALN_ID_OWNER" name="airlineId" type="java.lang.Long"/>
+        <property column="ACC_ID" name="configurationId" type="java.lang.Long"/>
+        <property column="ACR_REGISTRATION_NUM" name="registrationNum" length="6" type="string"/>
+        <property column="ACR_SHORT_REG" name="shortRegNum" length="3" type="string"/>
+        <property column="ACR_COMMENTS" name="comments" length="50" type="string"/>
+        <many-to-one name="airline" entity-name="Airline" column="ALN_ID_OWNER"
+                     lazy="false" not-found="ignore"
+                     unique="true" not-null="false" insert="false" update="false"/>
+        <many-to-one name="configuration" entity-name="AircraftConfiguration" column="ACC_ID"
+                     lazy="false" not-found="ignore"
+                     unique="true" not-null="false" insert="false" update="false"/>
+    </class>
+
+    <class name="cselp.domain.external.FuelConsumption"
+           table="FCP_FUEL_CONSUMPTION" entity-name="FuelConsumption">
+        <id column="FCP_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="fcp_eng_nb" name="engineNum" type="java.lang.Short"/>
+        <property column="fcp_eng_consumption_1" name="engineConsumption1" type="java.lang.Double"/>
+        <property column="fcp_eng_consumption_2" name="engineConsumption2" type="java.lang.Double"/>
+        <property column="fcp_eng_consumption_3" name="engineConsumption3" type="java.lang.Double"/>
+        <property column="fcp_eng_consumption_4" name="engineConsumption4" type="java.lang.Double"/>
+        <property column="fcp_apu_consumption" name="apuConsumption" type="java.lang.Double"/>
+        <property column="fcp_eng_runtime_1" name="engineRuntime1" type="java.sql.Timestamp"/>
+        <property column="fcp_eng_runtime_2" name="engineRuntime2" type="java.sql.Timestamp"/>
+        <property column="fcp_eng_runtime_3" name="engineRuntime3" type="java.sql.Timestamp"/>
+        <property column="fcp_eng_runtime_4" name="engineRuntime4" type="java.sql.Timestamp"/>
+        <property column="fcp_apu_runtime" name="apuRuntime" type="java.sql.Timestamp"/>
+        <property column="fcp_eng_anti_ice_time_1" name="engineAntiIceTime1" type="java.sql.Timestamp"/>
+        <property column="fcp_eng_anti_ice_time_2" name="engineAntiIceTime2" type="java.sql.Timestamp"/>
+        <property column="fcp_eng_anti_ice_time_3" name="engineAntiIceTime3" type="java.sql.Timestamp"/>
+        <property column="fcp_eng_anti_ice_time_4" name="engineAntiIceTime4" type="java.sql.Timestamp"/>
+    </class>
+
+    <class name="cselp.domain.external.Process"
+           table="PRC_PROCESS" entity-name="Process">
+        <id column="PRC_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="rct_id" name="recorderTypeId" type="java.lang.Long"/>
+        <property column="cdg_id" name="cartridgeId" type="java.lang.Long"/>
+        <property column="fap_id" name="fapConfId" type="java.lang.Long"/>
+        <property column="prc_file_name" name="fileName" length="50" type="java.lang.String"/>
+        <property column="prc_date" name="date" type="java.sql.Timestamp"/>
+        <property column="prc_cartridge_date_in" name="cartridgeDateIn" type="java.sql.Timestamp"/>
+        <property column="prc_cartridge_date_out" name="cartridgeDateOut" type="java.sql.Timestamp"/>
+        <property column="prc_flight_legs_count" name="flightLegsCount" type="java.lang.Short"/>
+        <property column="prc_frames_count" name="framesCount" type="java.lang.Integer"/>
+        <property column="prc_bad_frames_count" name="badFramesCount" type="java.lang.Integer"/>
+        <property column="prc_subframes_count" name="subFramesCount" type="java.lang.Integer"/>
+        <property column="prc_bad_subframes_count" name="badSubFramesCount" type="java.lang.Integer"/>
+        <property column="prc_transcription_speed" name="transcriptionSpeed" type="java.sql.Timestamp"/>
+        <property column="prc_error_rate" name="errorRate" type="java.lang.Double"/>
+        <property column="prc_archive_file_name" name="archiveFileName" length="15" type="java.lang.String"/>
+        <property column="prc_fap_start_date" name="fapStartDate" type="java.sql.Timestamp"/>
+        <property column="prc_fap_end_date" name="fapEndDate" type="java.sql.Timestamp"/>
+        <property column="prc_fap_frames_count" name="fapFramesCount" type="java.lang.Integer"/>
+        <property column="prc_fap_rejected_frames_count" name="fapRejectedFramesCount" type="java.lang.Integer"/>
+        <property column="prc_comments" name="comments" length="255" type="java.lang.String"/>
+        <property column="prc_datadirectory" name="dataDirectory" length="200" type="java.lang.String"/>
+        <property column="acr_id" name="aircraftId" type="java.lang.Long"/>
+        <property column="prc_login" name="login" length="100" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.external.FlightIdentification"
+           table="FLD_FLIGHT_IDENTIFICATION" entity-name="FlightIdentification">
+        <id column="FLD_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="FLD_DATE" name="flightDate" type="java.sql.Timestamp"/>
+        <property column="FLD_NUMBER" name="fldNumber" length="10" type="string"/>
+        <property column="FLD_LEG_NB" name="fldLegNumber" type="java.lang.Short"/>
+        <property column="FLD_REGISTRATION_NUM" name="registrationNumber" length="6" type="string"/>
+        <property column="FLD_CREATION_DATE" name="creationDate" type="java.sql.Timestamp"/>
+        <property column="FLD_EXPIRATION_DATE" name="expirationDate" type="java.sql.Timestamp"/>
+        <property column="FLD_AUTO_EXPIRE" name="autoExpire" type="java.lang.Boolean"/>
+        <property column="FLD_USAGE" name="usageFlag" type="java.lang.Short"/>
+    </class>
+
+    <class name="cselp.domain.external.Flight" table="FLI_FLIGHT" entity-name="Flight">
+        <id column="FLI_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ALN_ID" name="alnId" type="java.lang.Long"/>
+        <property column="ACR_ID" name="acrId" type="java.lang.Long"/>
+        <property column="PRC_ID" name="prcId" type="java.lang.Long"/>
+        <!--<property column="FCP_ID" name="fcpId" type="java.lang.Long"/>-->
+        <property column="APT_ID_LANDING" name="aptIdLanding" type="java.lang.Long"/>
+        <property column="RWY_ID_LANDING" name="rwyIdLanding" type="java.lang.Long"/>
+        <property column="APT_ID_TAKE_OFF" name="aptIdTakeOff" type="java.lang.Long"/>
+        <property column="RWY_ID_TAKE_OFF" name="rwyIdTakeOff" type="java.lang.Long"/>
+        <property column="FLI_DATE" name="startDate" type="java.sql.Timestamp"/>
+        <property column="FLI_DURATION" name="flightDuration" type="java.sql.Timestamp"/>
+        <property formula="FLI_DATE + FLI_DURATION" name="endDate" type="java.sql.Timestamp"/>
+        <property column="FLI_NUMBER" name="number" length="10" type="string"/>
+        <property column="FLI_LOW_EVENT_COUNT" name="lowEventCount" type="java.lang.Short"/>
+        <property column="FLI_MEDIUM_EVENT_COUNT" name="mediumEventCount" type="java.lang.Short"/>
+        <property column="FLI_HIGH_EVENT_COUNT" name="highEventCount" type="java.lang.Short"/>
+        <property column="FLI_INFO_EVENT_COUNT" name="infoEventCount" type="java.lang.Short"/>
+        <property column="FLIGHT_STATUS_ID" name="statusId" type="java.lang.Short"/>
+        <property column="AIRCRAFT_REGN_DISPLAY" name="aircraftRegNum" length="6" type="string"/>
+    </class>
+
+    <class name="cselp.domain.external.FlightWrapper" table="FLI_FLIGHT" entity-name="FlightWrapper">
+        <id column="FLI_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ALN_ID" name="alnId" type="java.lang.Long"/>
+        <property column="ACR_ID" name="acrId" type="java.lang.Long"/>
+        <property column="PRC_ID" name="prcId" type="java.lang.Long"/>
+        <!--<property column="FCP_ID" name="fcpId" type="java.lang.Long"/>-->
+        <property column="APT_ID_LANDING" name="aptIdLanding" type="java.lang.Long"/>
+        <property column="RWY_ID_LANDING" name="rwyIdLanding" type="java.lang.Long"/>
+        <property column="APT_ID_TAKE_OFF" name="aptIdTakeOff" type="java.lang.Long"/>
+        <property column="RWY_ID_TAKE_OFF" name="rwyIdTakeOff" type="java.lang.Long"/>
+        <property column="FLI_DATE" name="startDate" type="java.sql.Timestamp"/>
+        <property column="FLI_DURATION" name="flightDuration" type="java.sql.Timestamp"/>
+        <property formula="FLI_DATE + FLI_DURATION" name="endDate" type="java.sql.Timestamp"/>
+        <property column="FLI_NUMBER" name="number" length="10" type="string"/>
+        <property column="FLI_LOW_EVENT_COUNT" name="lowEventCount" type="java.lang.Short"/>
+        <property column="FLI_MEDIUM_EVENT_COUNT" name="mediumEventCount" type="java.lang.Short"/>
+        <property column="FLI_HIGH_EVENT_COUNT" name="highEventCount" type="java.lang.Short"/>
+        <property column="FLI_INFO_EVENT_COUNT" name="infoEventCount" type="java.lang.Short"/>
+        <property column="FLIGHT_STATUS_ID" name="statusId" type="java.lang.Short"/>
+        <property column="AIRCRAFT_REGN_DISPLAY" name="aircraftRegNum" length="6" type="string"/>
+        <many-to-one name="origin" entity-name="Airport" column="APT_ID_TAKE_OFF"
+                     lazy="false" not-found="ignore"
+                     unique="true" not-null="false" insert="false" update="false"/>
+        <many-to-one name="destination" entity-name="Airport" column="APT_ID_LANDING"
+                     lazy="false" not-found="ignore"
+                     unique="true" not-null="false" insert="false" update="false"/>
+    </class>
+
+    <class name="cselp.domain.external.EventPrimaryParameter"
+           table="EVENT_DATA_FOR_FILTERING" entity-name="EventPrimaryParameter" >
+        <id column="EVN_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="EVT_ID" name="eventTypeId" type="java.lang.Long"/>
+        <property column="FLI_ID" name="flightId" type="java.lang.Long"/>
+        <property column="PHA_ID" name="phaseId" type="java.lang.Short"/>
+        <property column="SEV_ID" name="severityId" type="java.lang.Short"/>
+        <property column="PRM_NAME" name="primaryParameterName" length="25" type="string"/>
+        <property column="XPS_VALUE" name="parameterValue" type="java.lang.Double"/>
+        <property column="EventTime" name="eventTime" type="java.sql.Timestamp"/>
+        <property column="FlightDate" name="flightTime" type="java.sql.Timestamp"/>
+        <property column="ACR_ID" name="aircraftId" type="java.lang.Long"/>
+        <property column="OriginID" name="airportIdTakeOff" type="java.lang.Long"/>
+        <property column="DestID" name="airportIdLanding" type="java.lang.Long"/>
+    </class>
+
+    <class name="cselp.domain.external.Flight" table="FLI_FLIGHT" entity-name="FlightNew">
+        <id column="FLI_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="ALN_ID" name="alnId" type="java.lang.Long"/>
+        <property column="ACR_ID" name="acrId" type="java.lang.Long"/>
+        <property column="PRC_ID" name="prcId" type="java.lang.Long"/>
+        <!--<property column="FCP_ID" name="fcpId" type="java.lang.Long"/>-->
+        <property column="APT_ID_LANDING" name="aptIdLanding" type="java.lang.Long"/>
+        <property column="RWY_ID_LANDING" name="rwyIdLanding" type="java.lang.Long"/>
+        <property column="APT_ID_TAKE_OFF" name="aptIdTakeOff" type="java.lang.Long"/>
+        <property column="RWY_ID_TAKE_OFF" name="rwyIdTakeOff" type="java.lang.Long"/>
+        <property column="FLI_DATE" name="startDate" type="java.sql.Timestamp"/>
+        <property column="FLI_DURATION" name="flightDuration" type="java.sql.Timestamp"/>
+        <property column="endDate" name="endDate" type="java.sql.Timestamp"/>
+        <property column="FLI_NUMBER" name="number" length="10" type="string"/>
+        <property column="FLI_LOW_EVENT_COUNT" name="lowEventCount" type="java.lang.Short"/>
+        <property column="FLI_MEDIUM_EVENT_COUNT" name="mediumEventCount" type="java.lang.Short"/>
+        <property column="FLI_HIGH_EVENT_COUNT" name="highEventCount" type="java.lang.Short"/>
+        <property column="FLI_INFO_EVENT_COUNT" name="infoEventCount" type="java.lang.Short"/>
+        <property column="FLIGHT_STATUS_ID" name="statusId" type="java.lang.Short"/>
+        <property column="AIRCRAFT_REGN_DISPLAY" name="aircraftRegNum" length="6" type="string"/>
+    </class>
+
+    <class name="cselp.domain.external.EventType" table="EVT_EVENT_TYPE" entity-name="EventType">
+        <id column="EVT_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="DTB_ID" name="dtbId" type="java.lang.Long"/>
+        <property column="EVT_NUMBER" name="eventNum" type="java.lang.Long"/>
+        <property column="EVT_NAME" name="name" length="50" type="string"/>
+        <!--<property column="EVT_DESCRIPTION" name="description" length="100" type="string"/>-->
+        <property column="EVT_CLASS" name="eventClass" length="1" type="string"/>
+        <property column="EVT_ALERT" name="alert" type="java.lang.Boolean"/>
+        <property column="EVT_STANDARD" name="standard" type="java.lang.Boolean"/>
+        <property column="EVT_ID_PARENT" name="parentId" type="java.lang.Long"/>
+        <property column="EVT_UPDATE_DATE" name="updateDate" type="java.sql.Timestamp"/>
+    </class>
+
+    <class name="cselp.domain.external.FapConfiguration" table="FAP_CONF" entity-name="FapConfiguration">
+        <id column="FAP_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="FRA_ID" name="frameId" type="java.lang.Long"/>
+        <property column="FAP_CLSID" name="classId" length="36" type="string"/>
+        <property column="FAP_NAME" name="name" length="10" type="string"/>
+        <property column="FAP_DESCRIPTION" name="description" length="50" type="string"/>
+        <property column="FAP_VERSION" name="version" type="java.lang.Integer"/>
+        <property column="FAP_REVISION" name="revision" type="java.lang.Integer"/>
+        <property column="FAP_BUILD_NUMBER" name="buildNumber" type="java.lang.Integer"/>
+        <property column="FAP_CREATION_DATE" name="creationDate" type="java.sql.Timestamp"/>
+        <property column="FAP_BUILD_DATE" name="buildDate" type="java.sql.Timestamp"/>
+        <property column="FAP_DEID_ENABLE" name="deidEnable" type="java.lang.Boolean"/>
+        <property column="FAP_FLIGHT_DATE_DEID" name="flightDateDeid" type="java.lang.Boolean"/>
+        <property column="FAP_AC_REG_DEID" name="acRegDeid" type="java.lang.Boolean"/>
+        <property column="FAP_ID_PARENT" name="parentId" type="java.lang.Long"/>
+    </class>
+
+    <class name="cselp.domain.external.Event" table="EVN_EVENT" entity-name="Event">
+        <id column="EVN_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="EVT_ID" name="typeId" type="java.lang.Long"/>
+        <property column="SEV_ID" name="severityId" type="java.lang.Short"/>
+        <property column="FLI_ID" name="flightId" type="java.lang.Long"/>
+        <property column="PHA_ID" name="phaseId" type="java.lang.Short"/>
+        <property column="EVN_TIME" name="eventTime" type="java.sql.Timestamp"/>
+        <property column="EVN_FRAME_NUMBER" name="frameNum" type="java.lang.Long"/>
+        <property column="event_status_id" name="statusId" type="java.lang.Short"/>
+    </class>
+
+    <class name="cselp.domain.external.Event" table="EVN_EVENT" entity-name="EventNew">
+        <id column="EVN_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="EVT_ID" name="typeId" type="java.lang.Long"/>
+        <property column="SEV_ID" name="severityId" type="java.lang.Short"/>
+        <property column="FLI_ID" name="flightId" type="java.lang.Long"/>
+        <property column="PHA_ID" name="phaseId" type="java.lang.Short"/>
+        <property column="eventTimeMs" name="eventTimeMs" type="java.lang.Long"/>
+        <property column="EVN_TIME" name="eventTime" type="java.sql.Timestamp"/>
+        <property column="EVN_FRAME_NUMBER" name="frameNum" type="java.lang.Long"/>
+        <property column="event_status_id" name="statusId" type="java.lang.Short"/>
+    </class>
+
+    <class name="cselp.domain.external.Parameter" table="PRM_PARAMETER" entity-name="Parameter">
+        <id column="PRM_ID" name="id" type="java.lang.Long">
+            <generator class="assigned"/>
+        </id>
+        <property column="PRT_ID" name="typeId" type="java.lang.Short"/>
+        <property column="FTT_ID" name="filterTypeId" type="java.lang.Long"/>
+        <property column="PRM_ID_PARENT" name="parentId" type="java.lang.Long"/>
+        <property column="FMT_ID_DISPLAY" name="formatId" type="java.lang.Short"/>
+        <property column="PRM_NUMBER" name="parameterNumber" type="java.lang.Long"/>
+        <property column="PRM_MNEMONIC" name="mnemonic" length="20" type="string"/>
+        <property column="PRM_NAME" name="name" length="25" type="string"/>
+        <property column="PRM_DESCRIPTION" name="description" length="50" type="string"/>
+        <property column="PRM_UNIT" name="unit" length="10" type="string"/>
+        <property column="PRM_POSITIVE_SIGN" name="positiveSign" length="1" type="string"/>
+        <property column="PRM_NEGATIVE_SIGN" name="negativeSign" length="1" type="string"/>
+        <property column="PRM_FIELD_SIZE" name="fieldSize" type="java.lang.Short"/>
+        <property column="PRM_DECIMAL_PLACES" name="decimalPlaces" type="java.lang.Short"/>
+        <property column="PRM_RATE" name="rate" type="java.lang.Double"/>
+        <property column="PRM_MIN_OP_RANGE" name="minOpRange" type="java.lang.Double"/>
+        <property column="PRM_MAX_OP_RANGE" name="maxOpRange" type="java.lang.Double"/>
+        <property column="PRM_TIME_OFFSET" name="timeOffset" type="java.lang.Long"/>
+        <property column="PRM_FAMILY" name="family" length="25" type="string"/>
+        <property column="PRM_SSM" name="ssm" type="java.lang.Boolean"/>
+        <property column="PRM_STATIC" name="statical" type="java.lang.Boolean"/>
+        <property column="PRM_PLOTLIST_DEFAULT_DISPLAY_FORMAT" name="plotlistDefaultDisplayFormat" length="12" type="string"/>
+        <property column="PRM_PLOTLIST_DEFAULT_GRAPHIC_FORMAT" name="plotlistDefaultGraphicFormat" type="java.lang.Short"/>
+        <property column="PRM_PLOTLIST_HEADER_1" name="plotlistHeader1" length="12" type="string"/>
+        <property column="PRM_PLOTLIST_HEADER_2" name="plotlistHeader2" length="12" type="string"/>
+        <property column="PRM_PLOTLIST_HEADER_3" name="plotlistHeader3" length="12" type="string"/>
+        <property column="PRM_UPDATE_DATE" name="updateDate" type="java.sql.Timestamp"/>
+        <property column="PRM_STATE" name="state" length="1" type="string"/>
+        <property column="PRM_DISPLAY_LEADING_ZEROS" name="displayLeadingZeros" type="java.lang.Boolean"/>
+        <property column="PRM_FILTER_ARGUMENT_1" name="filterArgument1" type="java.lang.Double"/>
+        <property column="PRM_FILTER_ARGUMENT_2" name="filterArgument2" type="java.lang.Double"/>
+        <property column="PRM_VALIDITY_DISPLAY" name="validityDisplay" type="java.lang.Short"/>
+        <property column="PRM_PARAMETER_SIGNED" name="parameterSigned" type="java.lang.Boolean"/>
+    </class>
+
+    <class name="cselp.domain.external.XpsSnapshot" table="XPS_SNAPSHOT" entity-name="XpsSnapshotNew">
+        <composite-id>
+            <key-property name="eventId" column="EVN_ID" type="java.lang.Long"/>
+            <key-property name="parameterId" column="PRM_ID" type="java.lang.Long"/>
+        </composite-id>
+        <property column="XPS_VALUE" name="value" type="java.lang.Double"/>
+        <property column="XPS_VALUE_T_MINUS_1" name="valueMinus1" type="java.lang.Double"/>
+        <property column="XPS_VALUE_T_MINUS_2" name="valueMinus2" type="java.lang.Double"/>
+        <property column="XPS_VALUE_T_MINUS_3" name="valueMinus3" type="java.lang.Double"/>
+        <property column="XPS_VALUE_T_PLUS_1" name="valuePlus1" type="java.lang.Double"/>
+        <property column="XPS_VALUE_T_PLUS_2" name="valuePlus2" type="java.lang.Double"/>
+        <property column="XPS_VALUE_T_PLUS_3" name="valuePlus3" type="java.lang.Double"/>
+        <property column="XPS_VALIDITY" name="validity" type="java.lang.String"/>
+    </class>
+
+    <class name="cselp.domain.external.Phase"
+           table="PHA_FLIGHT_PHASE" entity-name="Phase">
+        <id column="PHA_ID" name="id" type="java.lang.Short">
+            <generator class="assigned"/>
+        </id>
+        <property column="PHA_CODE" name="code" length="3" type="string"/>
+        <property column="PHA_NAME" name="name" length="25" type="string"/>
+    </class>
+
+    <query name="findEventPrimaryParameters">
+        <![CDATA[
+            from EventPrimaryParameter where id in (:ids)
+        ]]>
+    </query>
+
+    <query name="findEventPrimaryParametersByFlight">
+        <![CDATA[
+            from EventPrimaryParameter where flightId = :flightId
+        ]]>
+    </query>
+
+    <query name="findAllAirFASEAptCodes">
+        <![CDATA[
+            from AirFASEAptCode
+        ]]>
+    </query>
+
+    <query name="findAllAircraft">
+        <![CDATA[
+            from Aircraft
+        ]]>
+    </query>
+
+    <query name="findAllEventTypes">
+        <![CDATA[
+            from EventType
+        ]]>
+    </query>
+
+    <query name="findAllPhases">
+        <![CDATA[
+            from Phase
+        ]]>
+    </query>
+
+    <query name="findFlightByIds">
+        <![CDATA[
+            from Flight where id in (:ids)
+        ]]>
+    </query>
+
+</hibernate-mapping>

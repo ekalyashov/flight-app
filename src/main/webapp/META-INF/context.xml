@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context>
+
+    <Resource name="jdbc/external" auth="Container"
+              type="javax.sql.DataSource" driverClassName="${driver.class.name.external}"
+              url="${database.url.external}"
+              username="${database.username.external}" password="${database.password.external}"
+              maxTotal="20" maxIdle="10" maxWaitMillis="30000" timeBetweenEvictionRunsMillis="60000"
+              minEvictableIdleTimeMillis="30000" maxConnLifetimeMillis="180000"/>
+
+    <Resource name="jdbc/local" auth="Container"
+              type="javax.sql.DataSource" driverClassName="${driver.class.name.local}"
+              url="${database.url.local}"
+              username="${database.username.local}" password="${database.password.local}"
+              maxTotal="20" maxIdle="10" maxWaitMillis="30000" timeBetweenEvictionRunsMillis="60000"
+              minEvictableIdleTimeMillis="30000" maxConnLifetimeMillis="180000"/>
+
+</Context>
