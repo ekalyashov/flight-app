@@ -1,6 +1,6 @@
 # flight-app 
 
-R&D, PoC, Sprinig-based web application. Additional features:
+R&D, PoC, Spring-based web application. Additional features:
 - External and local datasources.
 - Redis as report cache.
 - LDAP authorization.
