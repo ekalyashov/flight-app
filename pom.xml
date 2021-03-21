@@ -33,7 +33,7 @@
         <crashub.version>1.3.2</crashub.version>
         <ehcache.version>2.7.0</ehcache.version>
         <!--default environment-->
-        <env>dev</env>
+        <env>local</env>
     </properties>
 
     <build>
